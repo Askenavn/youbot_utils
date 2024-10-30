@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+from geometry_msgs.msg import PointStamped, Twist
+from nav_msgs.msg import Odometry
+import rospy, math
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+
+def callback_odom(data):
+    global odom_pose 
+    odom_pose = data.pose.pose.position
+
+
+
+def callback_markerpose(data):
+    global marker_pose 
+    marker_pose = data.point
+
+
+
+def update_pos():
+    global marker_pose 
+    global odom_pose 
+    global pose
+    rospy.Subscriber('/marker_pose', PointStamped, callback_markerpose, queue_size=1)
+    rospy.Subscriber('youbot_base/mecanum_drive_controller/odom', Odometry, callback_odom, queue_size=1)
+    rospy.sleep(0.21)
+
+    pose.point.x = marker_pose.x + odom_pose.x
+    pose.point.y = marker_pose.y + odom_pose.y
+    pose.point.z = marker_pose.z + odom_pose.z
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    rospy.init_node('youbot_controll')
+    pose = PointStamped()
+    marker_pose = PointStamped().point
+    odom_pose = Odometry().pose.pose.position
+
+    update_pos()
+    print(marker_pose)
+    print(odom_pose)
+    print(pose.point)
+    print()
+
+    rospy.sleep(0.2)
+
+    # update_pos()
+    # update_pos()
+    # update_pos()
+    update_pos()
+    # update_pos()
+    # update_pos()
+    print(marker_pose)
+    print(odom_pose)
+    print(pose.point)
+
+    PointStamped().point
+    Odometry().pose.pose.orientation
